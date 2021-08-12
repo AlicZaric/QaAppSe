@@ -294,3 +294,4 @@ class TestRegistrationPage(BaseTest):
         assert profile_name.text == f"name{random_number}"
         self.log.info("I am here")
         self.log.info("Have a nice day")
+        self.log.info("Have a nice day")
