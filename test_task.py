@@ -6,67 +6,68 @@ import pytest
 from selenium import webdriver
 
 from conftest import BaseTest
+from constants.base import BaseConstants
+from constants.login_page import LoginPageConstants
 
 
 class TestRegistrationPage(BaseTest):
 
     @pytest.fixture(scope="function", autouse=True)
     def driver(self):
-        driver = webdriver.Chrome(executable_path=r"C:\Users\User\PycharmProjects\QaAppSe\drivers\chromedriver.exe")
+        driver = webdriver.Chrome(executable_path=BaseConstants.DRIVER_PATH)
         yield driver
         driver.close()
 
     def test_invalid_login(self, driver):
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
         # Clear required fields
-        username = driver.find_element_by_xpath(".//input[@placeholder='Username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_USERNAME_XPATH)
         username.clear()
         username.send_keys("Name333")
 
-        password = driver.find_element_by_xpath(".//input[@placeholder='Password']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_PASSWORD_XPATH)
         password.clear()
         password.send_keys("Passw234567")
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign In')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
         # Check the warning message
-        error_message = driver.find_element_by_xpath(".//div[contains(text(), 'Invalid username / password')]")
-        assert error_message.text == 'Invalid username / password'
+        error_message = driver.find_element_by_xpath(LoginPageConstants.INVALID_LOGIN_MESSAGE_XPATH)
+        assert error_message.text == LoginPageConstants.INVALID_LOGIN_MESSAGE_TEXT
         self.log.info("vse ok")
 
     # Тест на пустые значения в окне регистрации
     def test_invalid_reg(self, driver):
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
         # Clear required fields
-        username = driver.find_element_by_xpath(".//input[@placeholder='Pick a username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
         username.clear()
 
-        mail = driver.find_element_by_xpath(".//input[@id='email-register']")
+        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
         mail.clear()
 
-        password = driver.find_element_by_xpath(".//input[@id='password-register']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
         password.clear()
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign up for OurApp')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
         sign_in_button.click()
         sleep(1)
         self.log.info("Clicked on button")
 
         # Check the warning message
-        error_message = driver.find_elements_by_xpath(
-            ".//div[@class='alert alert-danger small liveValidateMessage liveValidateMessage--visible']")
+        error_message = driver.find_elements_by_xpath(LoginPageConstants.INVALID_REG_MESSAGE_XPATH)
         assert len(error_message) == 3
         self.log.info("vse ok")
 
@@ -75,32 +76,31 @@ class TestRegistrationPage(BaseTest):
         valid_login = 'Alisazaric'
 
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(".//input[@placeholder='Pick a username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
         username.clear()
         username.send_keys(valid_login)
 
-        mail = driver.find_element_by_xpath(".//input[@id='email-register']")
+        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
         mail.clear()
 
-        password = driver.find_element_by_xpath(".//input[@id='password-register']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
         password.clear()
 
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign up for OurApp')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
-        error_message1 = driver.find_element_by_xpath(
-            ".//div[contains(text(), 'You must provide a valid email address')]")
-        error_message2 = driver.find_element_by_xpath(
-            ".//div[contains(text(), 'Password must be at least 12 characters')]")
-        assert error_message1.text == 'You must provide a valid email address.'
-        assert error_message2.text == 'Password must be at least 12 characters.'
+        error_message_mail = driver.find_element_by_xpath(
+            LoginPageConstants.ERROR_MESSAGE_MAIL_XPATH)
+        error_message_password = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_PASSWORD_XPATH)
+        assert error_message_mail.text == LoginPageConstants.ERROR_MESSAGE_MAIL_TEXT
+        assert error_message_password.text == LoginPageConstants.ERROR_MESSAGE_PASSWORD_TEXT
         self.log.info("vse ok")
 
     # Тест с заполненым полем мейла и пустыми полями логина и пассворда
@@ -108,62 +108,58 @@ class TestRegistrationPage(BaseTest):
         valid_mail = 'alisa@gmail.com'
 
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(".//input[@placeholder='Pick a username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
         username.clear()
 
-        mail = driver.find_element_by_xpath(".//input[@id='email-register']")
+        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
         mail.clear()
         mail.send_keys(valid_mail)
 
-        password = driver.find_element_by_xpath(".//input[@id='password-register']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
         password.clear()
 
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign up for OurApp')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
-        error_message1 = driver.find_element_by_xpath(
-            ".//div[contains(text(), 'Username must be at least 3 characters.')]")
-        error_message2 = driver.find_element_by_xpath(
-            ".//div[contains(text(), 'Password must be at least 12 characters.')]")
-        assert error_message1.text == 'Username must be at least 3 characters.'
-        assert error_message2.text == 'Password must be at least 12 characters.'
+        error_message_username = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_USERNAME_XPATH)
+        error_message_password = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_PASSWORD_XPATH)
+        assert error_message_username.text == LoginPageConstants.ERROR_MESSAGE_USERNAME_TEXT
+        assert error_message_password.text == LoginPageConstants.ERROR_MESSAGE_PASSWORD_TEXT
         self.log.info("vse ok")
 
     def test_invalid_reg_with_pasw(self, driver):
         valid_password = '1234567890okjhgfd#'
 
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(".//input[@placeholder='Pick a username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
         username.clear()
 
-        mail = driver.find_element_by_xpath(".//input[@id='email-register']")
+        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
         mail.clear()
 
-        password = driver.find_element_by_xpath(".//input[@id='password-register']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
         password.clear()
         password.send_keys(valid_password)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign up for OurApp')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
-        error_message1 = driver.find_element_by_xpath(
-            ".//div[contains(text(), 'Username must be at least 3 characters.')]")
-        error_message2 = driver.find_element_by_xpath(
-            ".//div[contains(text(), 'You must provide a valid email address')]")
-        assert error_message1.text == 'Username must be at least 3 characters.'
-        assert error_message2.text == 'You must provide a valid email address.'
+        error_message_username = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_USERNAME_XPATH)
+        error_message_email = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_MAIL_XPATH)
+        assert error_message_username.text == LoginPageConstants.ERROR_MESSAGE_USERNAME_TEXT
+        assert error_message_email.text == LoginPageConstants.ERROR_MESSAGE_MAIL_TEXT
         self.log.info("vse ok")
 
     # написала тест на регистрацию. Тест прошел, я зарегистрировалась)
@@ -174,31 +170,31 @@ class TestRegistrationPage(BaseTest):
         valid_password = '3236107505Ss'
 
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(".//input[@placeholder='Pick a username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
         username.clear()
         username.send_keys(valid_login)
         sleep(1)
 
-        mail = driver.find_element_by_xpath(".//input[@id='email-register']")
+        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
         mail.clear()
         mail.send_keys(valid_mail)
         sleep(1)
 
-        password = driver.find_element_by_xpath(".//input[@id='password-register']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
         password.clear()
         password.send_keys(valid_password)
         sleep(1)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign up for OurApp')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
-        error_message = driver.find_element_by_xpath(".//div[contains(text(), 'That email is already being used.')]")
-        assert error_message.text == 'That email is already being used.'
+        error_message_mail_used = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_MAIL_USED_XPATH)
+        assert error_message_mail_used.text == LoginPageConstants.ERROR_MESSAGE_MAIL_USED_TEXT
         self.log.info("vse ok")
 
     # Тест на успешный логин с проверкой
@@ -207,20 +203,20 @@ class TestRegistrationPage(BaseTest):
         valid_password = '3236107505Ss'
 
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
         # Clear required fields
-        username = driver.find_element_by_xpath(".//input[@placeholder='Username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_USERNAME_XPATH)
         username.clear()
         username.send_keys(valid_login)
 
-        password = driver.find_element_by_xpath(".//input[@placeholder='Password']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_PASSWORD_XPATH)
         password.clear()
         password.send_keys(valid_password)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign In')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
@@ -236,27 +232,27 @@ class TestRegistrationPage(BaseTest):
         valid_mail = f"mail{random_number}@mail.com"
 
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
         # Clear required fields
-        username = driver.find_element_by_xpath(".//input[@placeholder='Username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_USERNAME_XPATH)
         username.clear()
         username.send_keys(valid_login)
         sleep(2)
 
-        password = driver.find_element_by_xpath(".//input[@placeholder='Password']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_PASSWORD_XPATH)
         password.clear()
         password.send_keys(valid_password)
         sleep(3)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign In')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
-        error_message = driver.find_element_by_xpath(".//div[contains(text(), 'Invalid username / password')]")
-        assert error_message.text == 'Invalid username / password'
+        error_message = driver.find_element_by_xpath(LoginPageConstants.INVALID_LOGIN_MESSAGE_XPATH)
+        assert error_message.text == LoginPageConstants.INVALID_LOGIN_MESSAGE_TEXT
         self.log.info("vse ok")
 
     # Тест на регистрацию рандомными данными с проверкой
@@ -267,26 +263,26 @@ class TestRegistrationPage(BaseTest):
         valid_mail = f"mail{random_number}@mail.com"
 
         # Open start page
-        driver.get("https://qa-complex-app-for-testing.herokuapp.com")
+        driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(".//input[@placeholder='Pick a username']")
+        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
         username.clear()
         username.send_keys(valid_login)
         sleep(1)
 
-        mail = driver.find_element_by_xpath(".//input[@id='email-register']")
+        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
         mail.clear()
         mail.send_keys(valid_mail)
         sleep(1)
 
-        password = driver.find_element_by_xpath(".//input[@id='password-register']")
+        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
         password.clear()
         password.send_keys(valid_password)
         sleep(1)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(".//button[contains(text(), 'Sign up for OurApp')]")
+        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
         sign_in_button.click()
         self.log.info("Clicked on button")
 
