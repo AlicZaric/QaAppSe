@@ -1,13 +1,15 @@
 """My homework"""
-import random
 from time import sleep
 
 import pytest
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 from conftest import BaseTest
 from constants.base import BaseConstants
 from constants.login_page import LoginPageConstants
+from constants.profile_page import ProfilePage
+from helpers.base import BaseHelpers
 
 
 class TestRegistrationPage(BaseTest):
@@ -19,50 +21,41 @@ class TestRegistrationPage(BaseTest):
         driver.close()
 
     def test_invalid_login(self, driver):
+        base_helper = BaseHelpers(driver)
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        # Clear required fields
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_USERNAME_XPATH)
-        username.clear()
-        username.send_keys("Name333")
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_PASSWORD_XPATH)
-        password.clear()
-        password.send_keys("Passw234567")
+        # Clear and fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_IN_USERNAME_XPATH, value="Name333")
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_IN_PASSWORD_XPATH,
+                                     value="Passw234567")
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_IN_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
         # Check the warning message
-        error_message = driver.find_element_by_xpath(LoginPageConstants.INVALID_LOGIN_MESSAGE_XPATH)
+        error_message = base_helper.find_by_contains_text(LoginPageConstants.INVALID_LOGIN_MESSAGE_TEXT)
         assert error_message.text == LoginPageConstants.INVALID_LOGIN_MESSAGE_TEXT
         self.log.info("vse ok")
 
     # Тест на пустые значения в окне регистрации
     def test_invalid_reg(self, driver):
+        base_helper = BaseHelpers(driver)
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        # Clear required fields
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
-        username.clear()
-
-        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
-        mail.clear()
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
-        password.clear()
+        # Clear and fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_USERNAME_XPATH, value='')
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_EMAIL_XPATH, value='')
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_PASSWORD_XPATH, value='')
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_UP_BUTTON_TEXT, element_tag='button').click()
         sleep(1)
         self.log.info("Clicked on button")
 
@@ -74,30 +67,23 @@ class TestRegistrationPage(BaseTest):
     # Тест с заполненым полем логина и пустыми полями мейла и пассворда
     def test_invalid_reg_with_login(self, driver):
         valid_login = 'Alisazaric'
+        base_helper = BaseHelpers(driver)
 
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
-        username.clear()
-        username.send_keys(valid_login)
-
-        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
-        mail.clear()
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
-        password.clear()
-
+        # Clear and fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_USERNAME_XPATH, value=valid_login)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_EMAIL_XPATH, value='')
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_PASSWORD_XPATH, value='')
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_UP_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
-        error_message_mail = driver.find_element_by_xpath(
-            LoginPageConstants.ERROR_MESSAGE_MAIL_XPATH)
+        error_message_mail = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_MAIL_XPATH)
         error_message_password = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_PASSWORD_XPATH)
         assert error_message_mail.text == LoginPageConstants.ERROR_MESSAGE_MAIL_TEXT
         assert error_message_password.text == LoginPageConstants.ERROR_MESSAGE_PASSWORD_TEXT
@@ -106,26 +92,20 @@ class TestRegistrationPage(BaseTest):
     # Тест с заполненым полем мейла и пустыми полями логина и пассворда
     def test_invalid_reg_with_mail(self, driver):
         valid_mail = 'alisa@gmail.com'
+        base_helper = BaseHelpers(driver)
 
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
-        username.clear()
-
-        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
-        mail.clear()
-        mail.send_keys(valid_mail)
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
-        password.clear()
-
+        # Clear and fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_USERNAME_XPATH, value='')
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_EMAIL_XPATH, value=valid_mail)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_PASSWORD_XPATH, value='')
         self.log.info("Fields are filled with invalid values")
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_UP_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
         error_message_username = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_USERNAME_XPATH)
@@ -136,24 +116,20 @@ class TestRegistrationPage(BaseTest):
 
     def test_invalid_reg_with_pasw(self, driver):
         valid_password = '1234567890okjhgfd#'
+        base_helper = BaseHelpers(driver)
 
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
-        username.clear()
-
-        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
-        mail.clear()
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
-        password.clear()
-        password.send_keys(valid_password)
+        # Clear and fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_USERNAME_XPATH, value='')
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_EMAIL_XPATH, value='')
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_PASSWORD_XPATH,
+                                     value=valid_password)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_UP_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
         error_message_username = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_USERNAME_XPATH)
@@ -168,29 +144,21 @@ class TestRegistrationPage(BaseTest):
         valid_login = 'Alisazaric'
         valid_mail = 'alis.zaric@gmail.com'
         valid_password = '3236107505Ss'
+        base_helper = BaseHelpers(driver)
 
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
-        username.clear()
-        username.send_keys(valid_login)
-        sleep(1)
-
-        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
-        mail.clear()
-        mail.send_keys(valid_mail)
-        sleep(1)
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
-        password.clear()
-        password.send_keys(valid_password)
+        # Clear and fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_USERNAME_XPATH, value=valid_login)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_EMAIL_XPATH, value=valid_mail)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_PASSWORD_XPATH,
+                                     value=valid_password)
         sleep(1)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_UP_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
         error_message_mail_used = driver.find_element_by_xpath(LoginPageConstants.ERROR_MESSAGE_MAIL_USED_XPATH)
@@ -201,23 +169,19 @@ class TestRegistrationPage(BaseTest):
     def test_valid_login(self, driver):
         valid_login = 'Alisazaric'
         valid_password = '3236107505Ss'
+        base_helper = BaseHelpers(driver)
 
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        # Clear required fields
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_USERNAME_XPATH)
-        username.clear()
-        username.send_keys(valid_login)
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_PASSWORD_XPATH)
-        password.clear()
-        password.send_keys(valid_password)
+        # Clear and fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_IN_USERNAME_XPATH, value=valid_login)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_IN_PASSWORD_XPATH,
+                                     value=valid_password)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_IN_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
         profile_name = driver.find_element_by_xpath(f".//*[contains(text(), '{valid_login.lower()}')]")
@@ -225,68 +189,54 @@ class TestRegistrationPage(BaseTest):
         self.log.info("I am here")
 
     # Тест на логин с рандомными данными
-    def test_log_valid(self, driver):
-        random_number = random.randint(100, 999)
-        valid_login = f"name{random_number}"
-        valid_password = f"long_password{random_number}"
-        valid_mail = f"mail{random_number}@mail.com"
+    def test_log_invalid(self, driver):
+        invalid_login = f"name{self.variety}"
+        invalid_password = f"long_password{self.variety}"
+        base_helper = BaseHelpers(driver)
 
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
         # Clear required fields
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_USERNAME_XPATH)
-        username.clear()
-        username.send_keys(valid_login)
-        sleep(2)
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_PASSWORD_XPATH)
-        password.clear()
-        password.send_keys(valid_password)
-        sleep(3)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_IN_USERNAME_XPATH,
+                                     value=invalid_login)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_IN_PASSWORD_XPATH,
+                                     value=invalid_password)
+        sleep(1)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_IN_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_IN_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
-        error_message = driver.find_element_by_xpath(LoginPageConstants.INVALID_LOGIN_MESSAGE_XPATH)
+        error_message = base_helper.find_by_contains_text(LoginPageConstants.INVALID_LOGIN_MESSAGE_TEXT)
         assert error_message.text == LoginPageConstants.INVALID_LOGIN_MESSAGE_TEXT
         self.log.info("vse ok")
 
     # Тест на регистрацию рандомными данными с проверкой
-    def test_reg_valid(self, driver):
-        random_number = random.randint(100, 999)
-        valid_login = f"name{random_number}"
-        valid_password = f"long_password{random_number}"
-        valid_mail = f"mail{random_number}@mail.com"
+    def test_register(self, driver):
+        valid_login = f"name{self.variety}"
+        valid_password = f"long_password{self.variety}"
+        valid_mail = f"mail{self.variety}@mail.com"
+
+        base_helper = BaseHelpers(driver)
 
         # Open start page
         driver.get(BaseConstants.START_PAGE_URL)
         self.log.info("Open page")
 
-        username = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_USERNAME_XPATH)
-        username.clear()
-        username.send_keys(valid_login)
-        sleep(1)
-
-        mail = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_EMAIL_XPATH)
-        mail.clear()
-        mail.send_keys(valid_mail)
-        sleep(1)
-
-        password = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_PASSWORD_XPATH)
-        password.clear()
-        password.send_keys(valid_password)
+        # Fill required fields
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_USERNAME_XPATH, value=valid_login)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_EMAIL_XPATH, value=valid_mail)
+        base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_UP_PASSWORD_XPATH,
+                                     value=valid_password)
         sleep(1)
 
         # Click the btn
-        sign_in_button = driver.find_element_by_xpath(LoginPageConstants.SIGN_UP_BUTTON_XPATH)
-        sign_in_button.click()
+        base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_UP_BUTTON_TEXT, element_tag='button').click()
         self.log.info("Clicked on button")
 
-        profile_name = driver.find_element_by_xpath(f".//*[contains(text(), 'name{random_number}')]")
-        assert profile_name.text == f"name{random_number}"
+        hello_message = driver.find_element_by_xpath(ProfilePage.HELLO_MESSAGE_XPATH)
+        assert valid_login.lower() in hello_message.text
+        assert hello_message.text == f"Hello {valid_login.lower()}, your feed is empty."
         self.log.info("I am here")
-        self.log.info("Have a nice day")
