@@ -203,7 +203,6 @@ class TestRegistrationPage(BaseTest):
                                      value=invalid_login)
         base_helper.fill_input_field(by=By.XPATH, locator=LoginPageConstants.SIGN_IN_PASSWORD_XPATH,
                                      value=invalid_password)
-        sleep(1)
 
         # Click the btn
         base_helper.find_by_contains_text(text=LoginPageConstants.SIGN_IN_BUTTON_TEXT, element_tag='button').click()
